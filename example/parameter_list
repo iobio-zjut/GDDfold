@@ -1,8 +1,0 @@
-# =============== Paremeters of GDDfold ===============
-# Name                  Value
-#
-# =============== Conformation search ===============
-NP                      100
-G_LP                    100
-G_global                100
-G_local                 100
