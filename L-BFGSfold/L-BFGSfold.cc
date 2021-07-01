@@ -12,7 +12,7 @@
 /// @details
 ///   Contains currently: Classic Abinitio
 ///
-///
+//
 /// @author Oliver Lange
 /// @author James Thompson
 /// @author Mike Tyka
@@ -116,8 +116,6 @@
 
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 
-///=========================== @CGLFold ===============================
-///@note 用户添加程序
 #include<iostream>
 #include<fstream>
 #include<sstream>
@@ -132,19 +130,14 @@
 #include<utility>
 
 #include <numeric/random/random.hh>
-///@brief 产生随机数
 #include<stdlib.h>
 #include<time.h>
-///@brief 计算rmsd的函数所在的头文件
 #include <core/scoring/rms_util.hh>
-///@brief 控制输出格式
 #include<iomanip>
-///@brief 读取天然态蛋白质
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-///@brief 输出pdb文件
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-///@brief 计算二级结构元素的距离
+
 //#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/Atom.hh>
@@ -173,7 +166,6 @@ using namespace std;
 core::pose::Pose initPose;
 core::pose::Pose nativePose;
 ofstream Local_acc;
-///=========================== @CGLFold ===============================
 
 static basic::Tracer tr( "protocols.abinitio" );
 
@@ -223,10 +215,8 @@ namespace abinitio {
   
     Real ClassicAbinitio::TrialEnergy = 0.0;
   
-///============================== @CGLFold ===============================================
   typedef id::TorsionType TorsionType;
   typedef std::pair< Size, TorsionType > MoveMapTorsionID;
-///============================== @CGLFold ===============================================
   
 //little helper function
 bool contains_stageid( utility::vector1< ClassicAbinitio::StageID > vec, ClassicAbinitio::StageID query ) {
@@ -385,8 +375,7 @@ ClassicAbinitio::clone() const
 	return moves::MoverOP( new ClassicAbinitio( *this ) );
 }
 
-///======================================================================================================
-///=========== @CGLFold ========================== @CGLFold ======================== @CGLFold ===========
+
 void 
 ClassicAbinitio::read_parameters(){
 	ifstream informParam("./parameter_list");
@@ -2410,7 +2399,6 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	core::import_pose::pose_from_file( nativePose, option[ in::file::native ]() , core::import_pose::PDB_file);
 
 	//Instantiate a angle search object
-	//LJAngleRotationOP LJAR( new LJAngleRotation );
 	
 	//read and extract parameters
 	read_parameters();
@@ -2432,8 +2420,6 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	Spicker_All_file_num = 1;
 	SPICKER_All_Data.open("./output_files/SPICKER_data/spicker.data1");
 	
-	Ave_acc.open("./Ave_acc.csv");
-	
 	using namespace core;
 	using namespace protocols;
 	using namespace protocols::moves;
@@ -2448,18 +2434,18 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	
 ///=========================================================================================================	
 	///@brief create a initial population and calculate its energy
-	cout << "================================ start Initialization =========================================" << endl;
+	//cout << "================================ start Initialization =========================================" << endl;
 	clock_t starttime = clock();
 	//vector<core::pose::Pose> population( generate_population_random(NP_, proteinLength) );
 	vector<core::pose::Pose> population( generate_population(NP_) );  //Rosetta stage1
 	clock_t endInitime = clock();
-	tr << "Time about Initialization: " << (double(endInitime) - starttime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
-	cout << "============================== Finished Initialization ========================================" << endl;
+	//tr << "Time about Initialization: " << (double(endInitime) - starttime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
+	//cout << "============================== Finished Initialization ========================================" << endl;
 	
-	cout << "==================================== Start add constraints ===================================" << endl;
+	//cout << "==================================== Start add constraints ===================================" << endl;
 	for (Size m=0; m<NP_; m++)
 	{
-		cout << "# add constraints " << m << endl;
+		//cout << "# add constraints " << m << endl;
 		core::scoring::constraints::add_constraints_from_cmdline_to_pose( population[m] );
 	}
 	vector<Real> PopulationRmsd( calculate_population_Rmsd(population));
@@ -2491,9 +2477,9 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	}
 	Output_last_generation( population, PopulationEnergy, 'O');
 	clock_t endtime_minmover = clock();
-	tr << "Time about algorithm: " << (double(endtime_minmover) - endInitime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
+	//tr << "Time about algorithm: " << (double(endtime_minmover) - endInitime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
 	
-	cout << "==================================== start Spicker ============================================" << endl;
+	//cout << "==================================== start Spicker ============================================" << endl;
 	string path = "./output_files/";
 	string pdb = ".pdb"; 
 	for(Size i=0; i<NP_; i++)
@@ -2504,7 +2490,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	SPICKER_Demand_All(nativePose);
 	
 	clock_t endtime = clock();
-	tr << "Time about all: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
+	//tr << "Time about all: " << (double(endtime) - starttime )/( CLOCKS_PER_SEC ) << " seconds." << std::endl;
 	
 
 	return;
