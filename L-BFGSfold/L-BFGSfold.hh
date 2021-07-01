@@ -481,7 +481,6 @@ private:
 	/// Copy-constructor copying only.
 	ClassicAbinitio const & operator = ( ClassicAbinitio const & src );
 
-///================================= @CGLFold ================================================================
 private:
 	///@brief save contact
 	struct Contact 
